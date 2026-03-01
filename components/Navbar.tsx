@@ -3,11 +3,41 @@
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { LogOut, User, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { databases, storage, Query } from '@/lib/appwrite';
 
 export default function Navbar() {
   const { user, loginWithGoogle, logout, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserPhoto = async () => {
+      if (!user || !user.$id) return;
+      try {
+        const response = await databases.listDocuments(
+          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+          process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID!,
+          [Query.equal("user_id", user.$id)]
+        );
+
+        if (response.documents.length > 0) {
+          const doc = response.documents[0];
+          if (doc.photoId) {
+            const fileUrl = storage.getFilePreview(
+              process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ID || "profile-photos",
+              doc.photoId
+            );
+            setPhotoUrl(fileUrl.toString());
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user photo:", error);
+      }
+    };
+
+    fetchUserPhoto();
+  }, [user]);
 
   const navLinks = [
     { name: 'Services', href: '/services' },
@@ -52,8 +82,12 @@ export default function Navbar() {
               {user ? (
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-xs font-medium text-black">
-                      {user.name?.charAt(0) || <User className="h-4 w-4" />}
+                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-black/5 text-xs font-medium text-black">
+                      {photoUrl ? (
+                        <img src={photoUrl} alt={user.name} className="h-full w-full object-cover" />
+                      ) : (
+                        user.name?.charAt(0) || <User className="h-4 w-4" />
+                      )}
                     </div>
                     <span className="text-sm font-light text-black">{user.name}</span>
                   </div>
@@ -108,8 +142,12 @@ export default function Navbar() {
             {user ? (
               <div className="px-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-sm font-medium text-black">
-                    {user.name?.charAt(0) || <User className="h-5 w-5" />}
+                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-black/5 text-sm font-medium text-black">
+                    {photoUrl ? (
+                      <img src={photoUrl} alt={user.name} className="h-full w-full object-cover" />
+                    ) : (
+                      user.name?.charAt(0) || <User className="h-5 w-5" />
+                    )}
                   </div>
                   <div>
                     <div className="text-base font-medium leading-none text-black">

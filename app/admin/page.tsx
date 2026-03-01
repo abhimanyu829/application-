@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { databases, Query } from '@/lib/appwrite';
+import { databases, storage, Query } from '@/lib/appwrite';
 import { Models } from 'appwrite';
 import { motion } from 'motion/react';
 import { Loader2, Search, Filter, CircleCheck, CircleX, Eye, AlertCircle } from 'lucide-react';
+import DotGrid from '@/components/DotGrid';
 
 interface Applicant extends Models.Document {
   name: string;
@@ -24,6 +25,7 @@ interface Applicant extends Models.Document {
   contribution: string;
   status: 'pending' | 'approved' | 'rejected';
   user_id: string;
+  photoId?: string;
   created_at: string;
 }
 
@@ -120,8 +122,23 @@ export default function AdminDashboard() {
   const uniqueSkills = Array.from(new Set(applicants.map(app => app.primary_skill).filter(Boolean)));
 
   return (
-    <div className="min-h-screen bg-yellow-50 py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-yellow-50 py-32 relative overflow-hidden">
+      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-20">
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+          <DotGrid
+            dotSize={11}
+            gap={10}
+            baseColor="#271E37"
+            activeColor="#66eaad"
+            proximity={330}
+            shockRadius={170}
+            shockStrength={5}
+            resistance={1100}
+            returnDuration={2.7}
+          />
+        </div>
+      </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="sm:flex sm:items-center sm:justify-between mb-12 border-b border-black/10 pb-8">
           <div>
             <h1 className="text-4xl font-bold tracking-tighter text-black">
@@ -131,7 +148,35 @@ export default function AdminDashboard() {
               Manage recruitment applications and team members.
             </p>
           </div>
-          <div className="mt-4 sm:ml-4 sm:mt-0 flex flex-col sm:flex-row gap-4">
+          
+          <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:mt-0">
+            {/* Avatar Group */}
+            {applicants.length > 0 && (
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-3 overflow-hidden">
+                  {applicants.slice(0, 5).map((app) => (
+                    <div key={app.$id} className="inline-block h-10 w-10 rounded-full ring-2 ring-yellow-50 overflow-hidden bg-black/5">
+                      {app.photoId ? (
+                        <img 
+                          src={storage.getFilePreview(process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ID || "profile-photos", app.photoId).toString()} 
+                          alt={app.name} 
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-black/10 text-xs font-medium text-black uppercase">
+                          {app.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-sm font-light text-black/60">
+                  {applicants.length} Total
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <Search className="h-4 w-4 text-black/40" />
@@ -158,6 +203,7 @@ export default function AdminDashboard() {
                   <option key={skill} value={skill}>{skill}</option>
                 ))}
               </select>
+            </div>
             </div>
           </div>
         </div>
