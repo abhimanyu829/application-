@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useEffect, useCallback, useMemo, useState } from 'react';
 import { gsap } from 'gsap';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 
@@ -56,6 +56,7 @@ const DotGrid = ({
     lastX: 0,
     lastY: 0
   });
+  const [canvasError, setCanvasError] = useState(false);
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const activeRgb = useMemo(() => hexToRgb(activeColor), [activeColor]);
@@ -73,38 +74,43 @@ const DotGrid = ({
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
 
-    const { width, height } = wrap.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    try {
+      const { width, height } = wrap.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    const ctx = canvas.getContext('2d');
-    if (ctx) ctx.scale(dpr, dpr);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.scale(dpr, dpr);
 
-    const cols = Math.floor((width + gap) / (dotSize + gap));
-    const rows = Math.floor((height + gap) / (dotSize + gap));
-    const cell = dotSize + gap;
+      const cols = Math.floor((width + gap) / (dotSize + gap));
+      const rows = Math.floor((height + gap) / (dotSize + gap));
+      const cell = dotSize + gap;
 
-    const gridW = cell * cols - gap;
-    const gridH = cell * rows - gap;
+      const gridW = cell * cols - gap;
+      const gridH = cell * rows - gap;
 
-    const extraX = width - gridW;
-    const extraY = height - gridH;
+      const extraX = width - gridW;
+      const extraY = height - gridH;
 
-    const startX = extraX / 2 + dotSize / 2;
-    const startY = extraY / 2 + dotSize / 2;
+      const startX = extraX / 2 + dotSize / 2;
+      const startY = extraY / 2 + dotSize / 2;
 
-    const dots = [];
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const cx = startX + x * cell;
-        const cy = startY + y * cell;
-        dots.push({ cx, cy, xOffset: 0, yOffset: 0, _inertiaApplied: false });
+      const dots = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const cx = startX + x * cell;
+          const cy = startY + y * cell;
+          dots.push({ cx, cy, xOffset: 0, yOffset: 0, _inertiaApplied: false });
+        }
       }
+      dotsRef.current = dots;
+    } catch (error) {
+      console.warn('Canvas error in DotGrid buildGrid:', error);
+      setCanvasError(true);
     }
-    dotsRef.current = dots;
   }, [dotSize, gap]);
 
   useEffect(() => {
@@ -154,10 +160,12 @@ const DotGrid = ({
   }, [proximity, baseColor, activeRgb, baseRgb, circlePath]);
 
   useEffect(() => {
-    buildGrid();
+    // Avoid synchronous state updates
+    requestAnimationFrame(() => buildGrid());
+    
     let ro = null;
-    if ('ResizeObserver' in window) {
-      ro = new ResizeObserver(buildGrid);
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      ro = new ResizeObserver(() => requestAnimationFrame(() => buildGrid()));
       wrapperRef.current && ro.observe(wrapperRef.current);
     } else {
       window.addEventListener('resize', buildGrid);
@@ -261,7 +269,13 @@ const DotGrid = ({
   return (
     <section className={`dot-grid ${className}`} style={style}>
       <div ref={wrapperRef} className="dot-grid__wrap">
-        <canvas ref={canvasRef} className="dot-grid__canvas" />
+        {canvasError ? (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100">
+            <div className="w-full h-full opacity-20 bg-gradient-to-br from-green-400/20 to-transparent"></div>
+          </div>
+        ) : (
+          <canvas ref={canvasRef} className="dot-grid__canvas" />
+        )}
       </div>
     </section>
   );

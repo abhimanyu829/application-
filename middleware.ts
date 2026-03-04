@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // Protected routes that require terms acceptance
 const PROTECTED_ROUTES = ['/admin', '/dashboard', '/services'];
-const PUBLIC_ROUTES = ['/accept-terms', '/privacy-policy', '/terms-of-service', '/careers', '/blog', '/departments'];
+const PUBLIC_ROUTES = ['/accept-terms', '/terms-gate', '/privacy-policy', '/terms-of-service', '/careers', '/blog', '/departments'];
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -23,8 +23,14 @@ export function middleware(request: NextRequest) {
   const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
 
   if (isProtectedRoute) {
-    // Middleware cannot access cookies directly for Appwrite session
-    // This will be handled by layout-based protection using AuthContext
+    // If terms cookie is missing, force user to accept terms before accessing protected areas
+    const accepted = request.cookies.get('termsAccepted')?.value === '1';
+    if (!accepted) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/terms-gate';
+      url.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(url);
+    }
     return NextResponse.next();
   }
 

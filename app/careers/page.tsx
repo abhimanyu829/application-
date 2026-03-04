@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useAuth } from '@/context/AuthContext';
-import { databases, ID } from '@/lib/appwrite';
 import { CircleCheck, Loader2, AlertCircle } from 'lucide-react';
 
 export default function Careers() {
@@ -13,30 +12,25 @@ export default function Careers() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    university: '',
-    roll_number: '',
-    branch: '',
-    age: '',
-    email: '',
-    linkedin: '',
-    github: '',
-    primary_skill: '',
-    tech_stack: [] as string[],
-    experience_level: '',
-    why_join: '',
-    ambition: '',
-    contribution: '',
+    NAME: '',
+    UNIVERSITY: '',
+    ROLL_NUMBER: '',
+    BRANCH: '',
+    AGE: '',
+    EMAIL: '',
+    LINKEDIN_ID: '',
+    GITHUB: '',
+    PRIMARY_SKILL: '',
+    TECH_STACK: '',
+    EXPERIENCE_LEVEL: '',
+    WHY_YOU_JOIN: '',
+    AMBITION: '',
+    CONTRIBUTION: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleTechStackChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const options = Array.from(e.target.selectedOptions, (option) => option.value);
-    setFormData((prev) => ({ ...prev, tech_stack: options }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,18 +44,43 @@ export default function Careers() {
     setError(null);
 
     try {
-      await databases.createDocument(
-        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID!,
-        ID.unique(),
-        {
-          ...formData,
-          age: parseInt(formData.age, 10),
-          status: 'pending',
-          user_id: user.$id,
-          created_at: new Date().toISOString(),
-        }
-      );
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      // Map frontend Uppercase fields to backend lowercase fields
+      const payload = {
+        name: formData.NAME,
+        university: formData.UNIVERSITY,
+        roll_number: formData.ROLL_NUMBER,
+        branch: formData.BRANCH,
+        age: parseInt(formData.AGE, 10),
+        email: formData.EMAIL,
+        linkedin: formData.LINKEDIN_ID,
+        github: formData.GITHUB,
+        primary_skill: formData.PRIMARY_SKILL,
+        tech_stack: formData.TECH_STACK.split(',').map(s => s.trim()).filter(Boolean),
+        experience_level: formData.EXPERIENCE_LEVEL,
+        why_join: formData.WHY_YOU_JOIN,
+        ambition: formData.AMBITION,
+        contribution: formData.CONTRIBUTION,
+      };
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applicants`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to submit application');
+      }
+
       setIsSuccess(true);
     } catch (err: any) {
       console.error('Error submitting application:', err);
@@ -162,16 +181,16 @@ export default function Careers() {
           <form onSubmit={handleSubmit} className="space-y-12">
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label htmlFor="name" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="NAME" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Full Name <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="name"
-                    id="name"
+                    name="NAME"
+                    id="NAME"
                     required
-                    value={formData.name}
+                    value={formData.NAME}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -179,16 +198,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="email" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="EMAIL" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Email Address <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="email"
-                    name="email"
-                    id="email"
+                    name="EMAIL"
+                    id="EMAIL"
                     required
-                    value={formData.email}
+                    value={formData.EMAIL}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -196,18 +215,18 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="age" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="AGE" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Age <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="number"
-                    name="age"
-                    id="age"
+                    name="AGE"
+                    id="AGE"
                     required
-                    min="16"
-                    max="100"
-                    value={formData.age}
+                    min="18"
+                    max="25"
+                    value={formData.AGE}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -215,16 +234,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="university" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="UNIVERSITY" className="block text-xs font-medium text-black uppercase tracking-widest">
                   University <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="university"
-                    id="university"
+                    name="UNIVERSITY"
+                    id="UNIVERSITY"
                     required
-                    value={formData.university}
+                    value={formData.UNIVERSITY}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -232,15 +251,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="roll_number" className="block text-xs font-medium text-black uppercase tracking-widest">
-                  Roll Number
+                <label htmlFor="ROLL_NUMBER" className="block text-xs font-medium text-black uppercase tracking-widest">
+                  Roll Number <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="roll_number"
-                    id="roll_number"
-                    value={formData.roll_number}
+                    name="ROLL_NUMBER"
+                    id="ROLL_NUMBER"
+                    required
+                    value={formData.ROLL_NUMBER}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -248,15 +268,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="branch" className="block text-xs font-medium text-black uppercase tracking-widest">
-                  Branch / Major
+                <label htmlFor="BRANCH" className="block text-xs font-medium text-black uppercase tracking-widest">
+                  Branch / Major <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="branch"
-                    id="branch"
-                    value={formData.branch}
+                    name="BRANCH"
+                    id="BRANCH"
+                    required
+                    value={formData.BRANCH}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
@@ -264,16 +285,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="linkedin" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="LINKEDIN_ID" className="block text-xs font-medium text-black uppercase tracking-widest">
                   LinkedIn Profile URL
                 </label>
                 <div className="mt-2">
                   <input
                     type="url"
-                    name="linkedin"
-                    id="linkedin"
+                    name="LINKEDIN_ID"
+                    id="LINKEDIN_ID"
                     placeholder="https://linkedin.com/in/..."
-                    value={formData.linkedin}
+                    value={formData.LINKEDIN_ID}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors placeholder:text-black/20"
                   />
@@ -281,16 +302,16 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="github" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="GITHUB" className="block text-xs font-medium text-black uppercase tracking-widest">
                   GitHub Profile URL
                 </label>
                 <div className="mt-2">
                   <input
                     type="url"
-                    name="github"
-                    id="github"
+                    name="GITHUB"
+                    id="GITHUB"
                     placeholder="https://github.com/..."
-                    value={formData.github}
+                    value={formData.GITHUB}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors placeholder:text-black/20"
                   />
@@ -298,140 +319,132 @@ export default function Careers() {
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="primary_skill" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="PRIMARY_SKILL" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Primary Skill <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <select
-                    id="primary_skill"
-                    name="primary_skill"
+                    id="PRIMARY_SKILL"
+                    name="PRIMARY_SKILL"
                     required
-                    value={formData.primary_skill}
+                    value={formData.PRIMARY_SKILL}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   >
-                    <option value="" disabled>Select a skill</option>
-                    <option value="Frontend Development">Frontend Development</option>
-                    <option value="Backend Development">Backend Development</option>
-                    <option value="Full Stack Development">Full Stack Development</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Machine Learning / AI">Machine Learning / AI</option>
-                    <option value="DevOps">DevOps</option>
-                    <option value="Sales / Marketing">Sales / Marketing</option>
-                    <option value="Product Management">Product Management</option>
+                    <option value="" className="bg-yellow-50">Select your primary skill</option>
+                    <option value="Frontend Development" className="bg-yellow-50">Frontend Development</option>
+                    <option value="Backend Development" className="bg-yellow-50">Backend Development</option>
+                    <option value="Full Stack Development" className="bg-yellow-50">Full Stack Development</option>
+                    <option value="Mobile Development" className="bg-yellow-50">Mobile Development</option>
+                    <option value="UI/UX Design" className="bg-yellow-50">UI/UX Design</option>
+                    <option value="DevOps" className="bg-yellow-50">DevOps</option>
+                    <option value="AI/ML" className="bg-yellow-50">AI/ML</option>
+                    <option value="Data Science" className="bg-yellow-50">Data Science</option>
                   </select>
                 </div>
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="experience_level" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="EXPERIENCE_LEVEL" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Experience Level <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <select
-                    id="experience_level"
-                    name="experience_level"
+                    id="EXPERIENCE_LEVEL"
+                    name="EXPERIENCE_LEVEL"
                     required
-                    value={formData.experience_level}
+                    value={formData.EXPERIENCE_LEVEL}
                     onChange={handleInputChange}
                     className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   >
-                    <option value="" disabled>Select level</option>
-                    <option value="Beginner (0-1 years)">Beginner (0-1 years)</option>
-                    <option value="Intermediate (1-3 years)">Intermediate (1-3 years)</option>
-                    <option value="Advanced (3+ years)">Advanced (3+ years)</option>
+                    <option value="" className="bg-yellow-50">Select your experience level</option>
+                    <option value="Student" className="bg-yellow-50">Student</option>
+                    <option value="Fresher (0-1 years)" className="bg-yellow-50">Fresher (0-1 years)</option>
+                    <option value="Junior (1-3 years)" className="bg-yellow-50">Junior (1-3 years)</option>
+                    <option value="Mid-Level (3-5 years)" className="bg-yellow-50">Mid-Level (3-5 years)</option>
+                    <option value="Senior (5+ years)" className="bg-yellow-50">Senior (5+ years)</option>
                   </select>
                 </div>
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="tech_stack" className="block text-xs font-medium text-black uppercase tracking-widest">
-                  Tech Stack <span className="text-black/40 lowercase normal-case">(Hold Ctrl/Cmd to select multiple)</span>
+                <label htmlFor="TECH_STACK" className="block text-xs font-medium text-black uppercase tracking-widest">
+                  Tech Stack (Comma Separated) <span className="text-black/40">*</span>
                 </label>
-                <div className="mt-4">
-                  <select
-                    id="tech_stack"
-                    name="tech_stack"
-                    multiple
-                    value={formData.tech_stack}
-                    onChange={handleTechStackChange}
-                    className="block w-full border border-black/10 bg-black/5 py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-3 h-48 transition-colors"
-                  >
-                    <option value="React">React</option>
-                    <option value="Next.js">Next.js</option>
-                    <option value="Node.js">Node.js</option>
-                    <option value="Python">Python</option>
-                    <option value="TypeScript">TypeScript</option>
-                    <option value="Tailwind CSS">Tailwind CSS</option>
-                    <option value="Appwrite">Appwrite</option>
-                    <option value="Firebase">Firebase</option>
-                    <option value="AWS">AWS</option>
-                    <option value="Figma">Figma</option>
-                  </select>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="TECH_STACK"
+                    id="TECH_STACK"
+                    required
+                    placeholder="e.g. React, Node.js, Python, AWS"
+                    value={formData.TECH_STACK}
+                    onChange={handleInputChange}
+                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors placeholder:text-black/20"
+                  />
                 </div>
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="why_join" className="block text-xs font-medium text-black uppercase tracking-widest">
+                <label htmlFor="WHY_YOU_JOIN" className="block text-xs font-medium text-black uppercase tracking-widest">
                   Why do you want to join us? <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <textarea
-                    id="why_join"
-                    name="why_join"
-                    rows={3}
+                    name="WHY_YOU_JOIN"
+                    id="WHY_YOU_JOIN"
+                    rows={4}
                     required
-                    value={formData.why_join}
+                    value={formData.WHY_YOU_JOIN}
                     onChange={handleInputChange}
-                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors resize-none"
+                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
                 </div>
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="ambition" className="block text-xs font-medium text-black uppercase tracking-widest">
-                  What is your ambition? <span className="text-black/40">*</span>
+                <label htmlFor="AMBITION" className="block text-xs font-medium text-black uppercase tracking-widest">
+                  What is your long-term ambition?
                 </label>
                 <div className="mt-2">
                   <textarea
-                    id="ambition"
-                    name="ambition"
+                    name="AMBITION"
+                    id="AMBITION"
                     rows={3}
-                    required
-                    value={formData.ambition}
+                    value={formData.AMBITION}
                     onChange={handleInputChange}
-                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors resize-none"
+                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
                 </div>
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="contribution" className="block text-xs font-medium text-black uppercase tracking-widest">
-                  How can you contribute to our startup? <span className="text-black/40">*</span>
+                <label htmlFor="CONTRIBUTION" className="block text-xs font-medium text-black uppercase tracking-widest">
+                  How can you contribute to our team? <span className="text-black/40">*</span>
                 </label>
                 <div className="mt-2">
                   <textarea
-                    id="contribution"
-                    name="contribution"
-                    rows={3}
+                    name="CONTRIBUTION"
+                    id="CONTRIBUTION"
+                    rows={4}
                     required
-                    value={formData.contribution}
+                    value={formData.CONTRIBUTION}
                     onChange={handleInputChange}
-                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors resize-none"
+                    className="block w-full border-0 border-b border-black/20 bg-transparent py-3 text-black focus:border-black focus:ring-0 sm:text-base font-light px-0 transition-colors"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="mt-12 flex justify-end">
+            <div className="mt-10 flex justify-end">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center bg-black px-10 py-4 text-sm font-medium text-white transition-transform hover:scale-105 uppercase tracking-widest disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center bg-black px-8 py-4 text-sm font-medium text-white transition-transform hover:scale-105 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-3 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Submitting...
                   </>
                 ) : (

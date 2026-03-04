@@ -157,9 +157,9 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative aspect-square bg-black/5 overflow-hidden flex items-center justify-center"
+              className="relative aspect-square bg-black/5 overflow-hidden"
             >
-              <Users className="h-32 w-32 text-black/10" />
+              <img src="/images/abhibhi-logo.png" alt="Abhibhi Developers" className="absolute inset-0 h-full w-full object-cover" />
             </motion.div>
           </div>
         </div>

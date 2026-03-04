@@ -31,7 +31,7 @@ export function useTermsProtection() {
         }
 
         // Check terms acceptance
-        const status = await checkTermsAcceptance(user.$id);
+        const status = await checkTermsAcceptance(user._id);
         setTermsStatus(status);
 
         // If terms not accepted, redirect
@@ -43,8 +43,8 @@ export function useTermsProtection() {
 
         setIsLoading(false);
       } catch (error) {
-        // If Appwrite is not available, just allow access
-        console.warn('Terms check failed (Appwrite unavailable):', error);
+        // If Backend is not available, just allow access (fail open for now) or handle error
+        console.warn('Terms check failed (Backend unavailable):', error);
         setIsAllowed(true);
         setIsLoading(false);
       }

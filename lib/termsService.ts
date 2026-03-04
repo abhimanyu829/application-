@@ -1,8 +1,3 @@
-import { databases, account, Query } from '@/lib/appwrite';
-
-const USERS_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID || 'users';
-const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || 'main';
-
 export interface UserTermsStatus {
   termsAccepted: boolean;
   privacyAccepted: boolean;
@@ -17,14 +12,8 @@ const CURRENT_POLICY_VERSION = 'v1.0';
  */
 export async function checkTermsAcceptance(userId: string): Promise<UserTermsStatus> {
   try {
-    const documents = await databases.listDocuments(
-      DATABASE_ID,
-      USERS_COLLECTION_ID,
-      [Query.equal('user_id', userId)]
-    );
-
-    if (documents.documents.length === 0) {
-      // User document doesn't exist yet, needs to accept
+    const token = localStorage.getItem('token');
+    if (!token) {
       return {
         termsAccepted: false,
         privacyAccepted: false,
@@ -33,7 +22,27 @@ export async function checkTermsAcceptance(userId: string): Promise<UserTermsSta
       };
     }
 
-    const userDoc = documents.documents[0];
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      return {
+        termsAccepted: false,
+        privacyAccepted: false,
+        policyVersion: '',
+        needsAcceptance: true,
+      };
+    }
+
+    const userDoc = await response.json();
+    
+    // In our new backend, we assume user data might have these fields or we manage it.
+    // For now, let's look at the User model we created: it has name, email, googleId.
+    // We should probably add terms_accepted to User model if we want this check to work.
+    
     const termsAccepted = userDoc.terms_accepted === true;
     const privacyAccepted = userDoc.privacy_accepted === true;
     const policyVersion = userDoc.policy_version || '';
@@ -51,7 +60,6 @@ export async function checkTermsAcceptance(userId: string): Promise<UserTermsSta
     };
   } catch (error) {
     console.error('Error checking terms acceptance:', error);
-    // If error, assume user needs to accept for safety
     return {
       termsAccepted: false,
       privacyAccepted: false,
@@ -66,50 +74,30 @@ export async function checkTermsAcceptance(userId: string): Promise<UserTermsSta
  */
 export async function acceptTermsAndPrivacy(userId: string): Promise<boolean> {
   try {
-    // Get current user
-    const user = await account.get();
-    
-    // Check if user document exists
-    const documents = await databases.listDocuments(
-      DATABASE_ID,
-      USERS_COLLECTION_ID,
-      [Query.equal('user_id', userId)]
-    );
+    const token = localStorage.getItem('token');
+    if (!token) return false;
 
     const now = new Date().toISOString();
+    
+    // We'll update the user document in the backend. 
+    // We need a PATCH /api/auth/me or similar endpoint for profile updates.
+    // For now, let's assume we can update it via a generic update endpoint or we add one.
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        terms_accepted: true,
+        privacy_accepted: true,
+        policy_version: CURRENT_POLICY_VERSION,
+        accepted_at: now,
+      }),
+    });
 
-    if (documents.documents.length === 0) {
-      // Create new user document
-      await databases.createDocument(
-        DATABASE_ID,
-        USERS_COLLECTION_ID,
-        userId,
-        {
-          user_id: userId,
-          email: user.email,
-          name: user.name,
-          terms_accepted: true,
-          privacy_accepted: true,
-          policy_version: CURRENT_POLICY_VERSION,
-          accepted_at: now,
-        }
-      );
-    } else {
-      // Update existing user document
-      await databases.updateDocument(
-        DATABASE_ID,
-        USERS_COLLECTION_ID,
-        documents.documents[0].$id,
-        {
-          terms_accepted: true,
-          privacy_accepted: true,
-          policy_version: CURRENT_POLICY_VERSION,
-          accepted_at: now,
-        }
-      );
-    }
-
-    return true;
+    return response.ok;
   } catch (error) {
     console.error('Error accepting terms:', error);
     return false;

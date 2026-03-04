@@ -13,7 +13,7 @@ export default function Contact() {
           className="mx-auto max-w-2xl lg:text-center mb-24"
         >
           <h1 className="font-display text-5xl font-bold tracking-tighter text-black sm:text-7xl leading-[1.1]">
-            Let's Build the Future Together
+            Let&apos;s Build the Future Together
           </h1>
         </motion.div>
 

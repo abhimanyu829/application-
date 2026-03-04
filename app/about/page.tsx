@@ -73,7 +73,7 @@ export default function About() {
             className="text-center border-t border-black/10 pt-12"
           >
             <p className="text-xl font-light leading-relaxed text-black/70">
-              We don't just build software — we architect digital ecosystems for growth.
+              We don&apos;t just build software — we architect digital ecosystems for growth.
             </p>
           </motion.div>
         </div>

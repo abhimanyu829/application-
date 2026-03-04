@@ -12,6 +12,11 @@ const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-displ
 export const metadata: Metadata = {
   title: 'Abhibhi SaaS Solutions',
   description: 'Building Scalable SaaS & AI Solutions for Modern Businesses',
+  icons: {
+    icon: '/images/abhibhi-logo.png',
+    shortcut: '/images/abhibhi-logo.png',
+    apple: '/images/abhibhi-logo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

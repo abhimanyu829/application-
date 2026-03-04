@@ -34,7 +34,7 @@ export default function AcceptTermsPage() {
     setError('');
 
     try {
-      const success = await acceptTermsAndPrivacy(user!.$id);
+      const success = await acceptTermsAndPrivacy(user!._id);
       if (success) {
         // Redirect to dashboard or home
         router.push('/');
@@ -86,7 +86,7 @@ export default function AcceptTermsPage() {
                   By accepting these Terms of Service, you agree to comply with all applicable laws and regulations. You agree to use our platform responsibly and not to engage in any activities that could harm the platform or other users.
                 </p>
                 <p>
-                  Our services are provided "as is" without warranties. We are not liable for any indirect, incidental, or consequential damages. Your use of our platform is at your own risk.
+                  Our services are provided &quot;as is&quot; without warranties. We are not liable for any indirect, incidental, or consequential damages. Your use of our platform is at your own risk.
                 </p>
                 <p>
                   You retain all rights to any content you submit. By submitting content, you grant us a license to use it for the purpose of providing our services.

@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo, FC, ReactNode } from 'react';
+import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo, FC, ReactNode, useState } from 'react';
 
 import * as THREE from 'three';
 
@@ -77,11 +77,54 @@ function extendMaterial<T extends THREE.Material = THREE.Material>(
   return mat;
 }
 
-const CanvasWrapper: FC<{ children: ReactNode }> = ({ children }) => (
-  <Canvas dpr={[1, 2]} frameloop="always" className="w-full h-full relative">
-    {children}
-  </Canvas>
-);
+const CanvasWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+  const [webGLError, setWebGLError] = useState(false);
+
+  useEffect(() => {
+    const handleWebGLError = () => {
+      console.warn('WebGL not supported, falling back to static background');
+      setWebGLError(true);
+    };
+
+    // Check WebGL support
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) {
+      handleWebGLError();
+    }
+
+    // Listen for WebGL context errors
+    window.addEventListener('webglcontextcreationerror', handleWebGLError);
+    
+    return () => {
+      window.removeEventListener('webglcontextcreationerror', handleWebGLError);
+    };
+  }, []);
+
+  if (webGLError) {
+    return (
+      <div className="w-full h-full relative bg-gradient-to-br from-green-50 to-green-100">
+        <div className="absolute inset-0 opacity-20">
+          <div className="w-full h-full bg-gradient-to-br from-green-400/20 to-transparent"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Canvas 
+      dpr={[1, 2]} 
+      frameloop="always" 
+      className="w-full h-full relative"
+      onError={(error) => {
+        console.warn('WebGL error in Canvas:', error);
+        setWebGLError(true);
+      }}
+    >
+      {children}
+    </Canvas>
+  );
+};
 
 const hexToNormalizedRGB = (hex: string): [number, number, number] => {
   const clean = hex.replace('#', '');

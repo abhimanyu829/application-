@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center bg-black font-bold text-white">
-                N
+                <img src="/images/abhibhi-logo.png" alt="Abhibhi Developers" className="h-6 w-6 object-contain" />
               </div>
               <span className="text-xl font-bold tracking-tighter text-black uppercase">Abhibhi</span>
             </Link>

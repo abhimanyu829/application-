@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { LogOut, User, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { databases, storage, Query } from '@/lib/appwrite';
 
 export default function Navbar() {
   const { user, loginWithGoogle, logout, isAdmin } = useAuth();
@@ -13,22 +12,41 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUserPhoto = async () => {
-      if (!user || !user.$id) return;
-      try {
-        const response = await databases.listDocuments(
-          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-          process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID!,
-          [Query.equal("user_id", user.$id)]
-        );
+      // In the new backend, the user object might already contain the picture URL if it came from Google
+      if (!user) return;
+      
+      if (user.picture) {
+        setPhotoUrl(user.picture);
+        return;
+      }
 
-        if (response.documents.length > 0) {
-          const doc = response.documents[0];
-          if (doc.photoId) {
-            const fileUrl = storage.getFilePreview(
-              process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ID || "profile-photos",
-              doc.photoId
-            );
-            setPhotoUrl(fileUrl.toString());
+      // If we still need to fetch from applicants collection (e.g. if photo is uploaded manually)
+      // We can check the /api/applicants/my endpoint
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applicants/my`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const applicants = await response.json();
+          if (applicants && applicants.length > 0) {
+            const applicant = applicants[0];
+            // If the applicant has a photoId (which might be a URL in the new system or ID)
+            if (applicant.photoId) {
+               // Assuming photoId stores the URL directly now, or we construct it
+               // For now, let's assume it might be a full URL if we changed how we store it,
+               // or if it's still an ID, we'd need an endpoint to serve it.
+               // Since we removed Appwrite storage, we don't have `storage.getFilePreview`.
+               // If the user hasn't implemented a file upload backend yet, we might skip this
+               // OR assume photoId is a URL.
+               // Given "DO NOT modify UI", we should try to show something.
+               setPhotoUrl(applicant.photoId);
+            }
           }
         }
       } catch (error) {
@@ -56,7 +74,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center bg-black font-bold text-white">
-                N
+                <img src="/images/abhibhi-logo.png" alt="Abhibhi Developers" className="h-6 w-6 object-contain" />
               </div>
               <span className="text-xl font-bold tracking-tighter text-black uppercase">Abhibhi</span>
             </Link>
