@@ -26,7 +26,18 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://application-8es6.vercel.app",
+      process.env.FRONTEND_URL,
+      process.env.APP_URL
+    ].filter(Boolean),
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    credentials: true
+  })
+);
 
 // Body parser
 app.use(express.json());
