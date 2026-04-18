@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import { useRouter } from 'next/navigation';
 
 // Define User type based on backend response
 interface User {
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function AuthProviderContent({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     checkUser();
@@ -98,6 +100,7 @@ function AuthProviderContent({ children }: { children: ReactNode }) {
           if (userResponse.ok) {
              const userData = await userResponse.json();
              setUser({ ...userData, token: data.token, $id: userData._id });
+             router.push('/');
           }
         } else {
           console.error('Backend login failed', data);
