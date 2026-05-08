@@ -12,8 +12,8 @@ const setupDefaultAdmin = async () => {
 
     // Create default admin
     const defaultAdmin = await Admin.create({
-      username: process.env.DEFAULT_ADMIN_USERNAME || 'admin',
-      password: process.env.DEFAULT_ADMIN_PASSWORD || 'admin123',
+      username: process.env.DEFAULT_ADMIN_USERNAME ,
+      password: process.env.DEFAULT_ADMIN_PASSWORD ,
       role: 'superadmin',
     });
 

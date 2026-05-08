@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className="bg-yellow-50 text-black font-sans antialiased min-h-screen flex flex-col selection:bg-black selection:text-white" suppressHydrationWarning>
+      <body className="bg-[#0a0520] text-white font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-500/30 selection:text-white" suppressHydrationWarning>
         <AuthProvider>
           <Navbar />
           <RouteLoader />

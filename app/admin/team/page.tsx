@@ -183,24 +183,27 @@ export default function AdminTeamPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-yellow-50 p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#0a0520] py-32 relative overflow-hidden px-4">
+      {/* Aurora Background */}
+      <div className="aurora-dashboard-bg opacity-70" />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-black">Team Management</h1>
-            <p className="text-sm text-black/60 mt-1">Welcome, {admin.username}</p>
+            <h1 className="text-4xl font-bold tracking-tighter text-white">Team Management</h1>
+            <p className="text-sm text-white/60 mt-2 font-light">Welcome, {admin.username}</p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={() => setShowForm(true)}
-              className="bg-black text-white px-6 py-3 rounded-lg hover:bg-black/80 transition-colors flex items-center gap-2"
+              className="bg-white text-[#0a0520] px-6 py-3 rounded-xl hover:bg-white/90 transition-all active:scale-[0.98] flex items-center gap-2 font-bold tracking-tight shadow-lg"
             >
               <Plus className="w-4 h-4" />
               Add Member
             </button>
             <button
               onClick={logout}
-              className="bg-white text-black px-4 py-3 rounded-lg border border-black/20 hover:bg-black/5 transition-colors flex items-center gap-2"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white/60 hover:text-white border border-white/20 rounded-xl transition-colors"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -210,14 +213,14 @@ export default function AdminTeamPanel() {
 
         {showForm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto scroll-smooth">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-black">
-                  {editingMember ? 'Edit Member' : 'Add Member'}
+            <div className="bg-black/80 backdrop-blur-2xl rounded-2xl p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto scroll-smooth border border-white/10 shadow-2xl">
+              <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                <h2 className="text-2xl font-bold text-white tracking-tight">
+                  {editingMember ? 'Edit Elite Member' : 'Add New Member'}
                 </h2>
                 <button
                   onClick={resetForm}
-                  className="text-black/40 hover:text-black"
+                  className="text-white/40 hover:text-white transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -225,32 +228,32 @@ export default function AdminTeamPanel() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Name</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Name</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Email</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                   >
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
@@ -259,11 +262,11 @@ export default function AdminTeamPanel() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Department</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Department</label>
                   <select
                     value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     required
                   >
                     <option value="">Select Department</option>
@@ -274,61 +277,61 @@ export default function AdminTeamPanel() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Role</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Role</label>
                   <input
                     type="text"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">Profile Image URL</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">Profile Image URL</label>
                   <input
                     type="url"
                     value={formData.profileImage}
                     onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">LinkedIn URL</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">LinkedIn URL</label>
                   <input
                     type="url"
                     value={formData.linkedin}
                     onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     placeholder="https://linkedin.com/in/username"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-black/70 mb-1">GitHub URL</label>
+                  <label className="block text-sm font-medium text-white/70 mb-1">GitHub URL</label>
                   <input
                     type="url"
                     value={formData.github}
                     onChange={(e) => setFormData({ ...formData, github: e.target.value })}
-                    className="w-full px-3 py-2 border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
                     placeholder="https://github.com/username"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-4 pt-8">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-black text-white py-2 rounded-lg hover:bg-black/80 transition-colors disabled:opacity-50"
+                    className="flex-1 bg-white text-[#0a0520] py-3 rounded-xl hover:bg-white/90 transition-all active:scale-[0.98] font-bold shadow-lg disabled:opacity-50"
                   >
-                    {loading ? 'Saving...' : (editingMember ? 'Update' : 'Add')}
+                    {loading ? 'Processing...' : (editingMember ? 'Update Member' : 'Onboard Member')}
                   </button>
                   <button
                     type="button"
                     onClick={resetForm}
-                    className="flex-1 bg-white text-black py-2 rounded-lg border border-black/20 hover:bg-black/5 transition-colors"
+                    className="flex-1 bg-white/5 text-white py-3 rounded-xl border border-white/10 hover:bg-white/10 transition-all font-medium"
                   >
                     Cancel
                   </button>
@@ -338,44 +341,44 @@ export default function AdminTeamPanel() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm border border-black/5">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-black/5">
+              <thead className="bg-white/5">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-black/60 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-black/60 uppercase tracking-wider">Department</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-black/60 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-black/60 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-black/60 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">Department</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">Role</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-black/10">
+              <tbody className="divide-y divide-white/5">
                 {fetchLoading ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-black/60">Loading team members...</td>
+                    <td colSpan={4} className="px-6 py-8 text-center text-white/60">Loading team members...</td>
                   </tr>
                 ) : members.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-black/60">No team members found. Add your first member!</td>
+                    <td colSpan={4} className="px-6 py-8 text-center text-white/60">No team members found. Add your first member!</td>
                   </tr>
                 ) : (
                   members.map((member) => (
                     <tr key={member._id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                         {member.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-black/60">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
                         {member.department}
                       </td>
-                      <td className="px-6 py-4 text-sm text-black/60">
+                      <td className="px-6 py-4 text-sm text-white/60">
                         {member.role}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium uppercase tracking-widest ${
-                          member.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          member.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                          member.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                          member.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
+                          'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         }`}>
                           {member.status || 'approved'}
                         </span>
@@ -384,7 +387,7 @@ export default function AdminTeamPanel() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEdit(member)}
-                            className="p-2 text-black/60 hover:text-black transition-colors"
+                            className="p-2 text-white/60 hover:text-white transition-colors"
                           >
                             <Edit className="w-4 h-4" />
                           </button>

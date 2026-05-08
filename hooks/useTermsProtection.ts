@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { checkTermsAcceptance, UserTermsStatus } from '@/lib/termsService';
@@ -14,6 +14,7 @@ export function useTermsProtection() {
   const [termsStatus, setTermsStatus] = useState<UserTermsStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAllowed, setIsAllowed] = useState(false);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -23,12 +24,16 @@ export function useTermsProtection() {
           return;
         }
 
-        // If no user, redirect to home
+        // If no user, allow page to render (not forcing redirect here — each page manages it)
         if (!user) {
-          router.push('/');
+          setIsAllowed(true);
           setIsLoading(false);
           return;
         }
+
+        // Only fetch once per mount to avoid flicker
+        if (hasFetched.current) return;
+        hasFetched.current = true;
 
         // Check terms acceptance
         const status = await checkTermsAcceptance(user._id);

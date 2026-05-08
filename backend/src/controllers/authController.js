@@ -72,6 +72,10 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      avatar: user.avatar,
+      terms_accepted: user.terms_accepted,
+      privacy_accepted: user.privacy_accepted,
+      policy_version: user.policy_version,
       token: generateToken(user._id),
     });
   } else {
@@ -84,7 +88,18 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user);
+  const user = req.user;
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    avatar: user.avatar,
+    picture: user.avatar,
+    terms_accepted: user.terms_accepted,
+    privacy_accepted: user.privacy_accepted,
+    policy_version: user.policy_version,
+  });
 });
 
 // @desc    Update user data
@@ -165,13 +180,21 @@ const googleAuth = asyncHandler(async (req, res) => {
       picture = payload.picture;
     }
 
+    // Validate that we received an email from Google
+    if (!email) {
+      console.error('Google payload missing email');
+      res.status(400);
+      throw new Error('Email not provided by Google authentication');
+    }
+
     // Check if user exists
     let user = await User.findOne({ email });
 
     if (user) {
-      // Update googleId and avatar if they are missing or changed
+      // Update details from Google on every login
       user.googleId = googleId;
       user.avatar = picture || user.avatar;
+      user.name = name; // Ensure name stays synced with Google profile
       await user.save();
     } else {
       // Create new user
@@ -192,6 +215,9 @@ const googleAuth = asyncHandler(async (req, res) => {
       role: user.role,
       avatar: user.avatar,
       picture: user.avatar, // For backward compatibility
+      terms_accepted: user.terms_accepted,
+      privacy_accepted: user.privacy_accepted,
+      policy_version: user.policy_version,
       token: generateToken(user._id),
     });
   } catch (error) {

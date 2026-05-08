@@ -2,11 +2,11 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: false,
+  },
+  turbopack: {
+    root: process.cwd(),
   },
   // Allow access to remote image placeholder.
   images: {
@@ -22,11 +22,11 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   transpilePackages: ['motion'],
   // ensure Next infers the correct root when multiple lockfiles exist
-  outputFileTracingRoot: __dirname,
-  webpack: (config, {dev}) => {
+  outputFileTracingRoot: process.cwd(),
+  webpack: (config, context) => {
     // HMR is disabled in AI Studio via DISABLE_HMR env var.
     // Do not modify—file watching is disabled to prevent flickering during agent edits.
-    if (dev && process.env.DISABLE_HMR === 'true') {
+    if (context.dev && process.env.DISABLE_HMR === 'true') {
       config.watchOptions = {
         ignored: /.*/,
       };

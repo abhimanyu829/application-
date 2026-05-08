@@ -66,77 +66,19 @@ export default function TeamPage() {
     setFilteredMembers(filtered);
   };
 
-  const TeamMemberCard = ({ member }: { member: TeamMember }) => (
-    <motion.div
-      className="bg-white rounded-lg shadow-sm border border-black/5 p-6 text-center group"
-      whileHover={{ 
-        y: -8,
-        rotateX: 5,
-        rotateY: 5,
-        scale: 1.02,
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-      }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      style={{ transformStyle: 'preserve-3d' }}
-    >
-      <div className="mb-4">
-        {member.avatar ? (
-          <img
-            src={member.avatar}
-            alt={member.name}
-            className="w-24 h-24 rounded-full mx-auto object-cover border-2 border-black/10"
-          />
-        ) : (
-          <div className="w-24 h-24 rounded-full mx-auto bg-black/5 flex items-center justify-center text-black/40 text-2xl font-medium">
-            {member.name.charAt(0)}
-          </div>
-        )}
-      </div>
-      
-      <h3 className="text-lg font-medium text-black mb-1">{member.name}</h3>
-      
-      <div className="inline-block px-3 py-1 bg-black/5 text-black/70 text-xs font-medium rounded-full mb-2">
-        {member.department}
-      </div>
-      
-      <p className="text-sm text-black/60 mb-4 leading-relaxed">{member.role}</p>
-      
-      <div className="flex justify-center gap-3">
-        {member.linkedin && (
-          <a
-            href={member.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors"
-          >
-            <Linkedin className="w-4 h-4 text-black/60" />
-          </a>
-        )}
-        {member.github && (
-          <a
-            href={member.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors"
-          >
-            <Github className="w-4 h-4 text-black/60" />
-          </a>
-        )}
-      </div>
-    </motion.div>
-  );
+
 
   const LoadingSkeleton = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       {[...Array(8)].map((_, i) => (
-        <div key={i} className="bg-white rounded-lg shadow-sm border border-black/5 p-6 animate-pulse">
-          <div className="w-24 h-24 rounded-full mx-auto bg-black/10 mb-4" />
-          <div className="h-4 bg-black/10 rounded mb-2 mx-auto w-3/4" />
-          <div className="h-3 bg-black/10 rounded mb-2 mx-auto w-1/2" />
-          <div className="h-3 bg-black/10 rounded mb-4 mx-auto w-full" />
-          <div className="flex justify-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-black/10" />
-            <div className="w-8 h-8 rounded-full bg-black/10" />
+        <div key={i} className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 animate-pulse">
+          <div className="w-32 h-32 rounded-full mx-auto bg-white/10 mb-6" />
+          <div className="h-6 bg-white/10 rounded-full mb-4 mx-auto w-3/4" />
+          <div className="h-4 bg-white/5 rounded-full mb-6 mx-auto w-1/2" />
+          <div className="h-3 bg-white/5 rounded-full mb-8 mx-auto w-full" />
+          <div className="flex justify-center gap-4">
+            <div className="w-10 h-10 rounded-2xl bg-white/5" />
+            <div className="w-10 h-10 rounded-2xl bg-white/5" />
           </div>
         </div>
       ))}
@@ -144,37 +86,43 @@ export default function TeamPage() {
   );
 
   return (
-    <div className="min-h-screen bg-yellow-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="min-h-screen bg-[#0a0520] relative overflow-hidden selection:bg-emerald-500/30 selection:text-white">
+      <div className="aurora-dashboard-bg opacity-70" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-black mb-4">Our Team</h1>
-          <p className="text-lg text-black/60 max-w-2xl mx-auto">
-            Meet the talented individuals who make our mission possible
+          <h1 className="text-5xl font-black tracking-tighter text-white mb-6 sm:text-7xl uppercase">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/70">Our</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400">Team</span>
+          </h1>
+          <p className="text-lg font-light text-white/80 max-w-2xl mx-auto tracking-wide">
+            Meet the elite engineers and visionaries driving the next generation of SaaS innovation.
           </p>
         </div>
 
-        <div className="mb-8 space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black/40 w-4 h-4" />
+        <div className="mb-12 space-y-6">
+          <div className="flex flex-col sm:flex-row gap-6 items-center justify-between bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-2xl">
+            <div className="relative flex-1 max-w-md w-full">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search team members..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-black/10 rounded-lg bg-white text-black placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-black/20"
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
               />
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               {departments.map((dept) => (
                 <button
                   key={dept}
                   onClick={() => setSelectedDepartment(dept)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all tracking-widest uppercase ${
                     selectedDepartment === dept
-                      ? 'bg-black text-white'
-                      : 'bg-white text-black/60 hover:bg-black/5 border border-black/10'
+                      ? 'bg-white text-[#0a0520] shadow-[0_0_20px_rgba(255,255,255,0.2)]'
+                      : 'bg-white/5 text-white/80 hover:text-white hover:bg-white/10 border border-white/10'
                   }`}
                 >
                   {dept}
@@ -187,16 +135,83 @@ export default function TeamPage() {
         {loading ? (
           <LoadingSkeleton />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {filteredMembers.map((member) => (
-              <TeamMemberCard key={member._id} member={member} />
+              <div key={member._id} className="uiverse-parent group">
+                <div 
+                  className="uiverse-card"
+                  style={{ '--card-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)' } as any}
+                >
+                  <div className="uiverse-glass" />
+                  
+                  <div className="uiverse-logo">
+                    <span className="uiverse-circle uiverse-circle1"></span>
+                    <span className="uiverse-circle uiverse-circle2"></span>
+                    <span className="uiverse-circle uiverse-circle3"></span>
+                    <span className="uiverse-circle uiverse-circle4"></span>
+                    <span className="uiverse-circle uiverse-circle5">
+                      <Linkedin className="w-5 h-5 text-white" />
+                    </span>
+                  </div>
+
+                  <div className="uiverse-content">
+                    <div className="mb-6 relative w-fit">
+                      <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+                      {member.avatar ? (
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          className="w-24 h-24 rounded-full object-cover border-2 border-white/10 relative z-10"
+                        />
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center text-white/40 text-2xl font-bold border-2 border-white/10 relative z-10">
+                          {member.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <span className="title group-hover:text-emerald-400 transition-colors duration-300">{member.name}</span>
+                    
+                    <div className="inline-block px-3 py-1 bg-white/10 text-white/80 text-[8px] font-black rounded-full mt-4 mb-2 tracking-widest uppercase border border-white/5">
+                      {member.department}
+                    </div>
+                    
+                    <span className="text italic">"{member.role}"</span>
+                  </div>
+
+                  <div className="uiverse-bottom">
+                    <div className="social-buttons-container">
+                      {member.linkedin && (
+                        <a
+                          href={member.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-button"
+                        >
+                          <Linkedin className="w-4 h-4 text-white" />
+                        </a>
+                      )}
+                      {member.github && (
+                        <a
+                          href={member.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-button"
+                        >
+                          <Github className="w-4 h-4 text-white" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
 
         {!loading && filteredMembers.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-black/60">No team members found matching your criteria.</p>
+          <div className="text-center py-24 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 mt-12">
+            <p className="text-white/40 text-xl font-light italic">No visionaries found in this sector.</p>
           </div>
         )}
       </div>

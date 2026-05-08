@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -15,79 +16,67 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const { login } = useAdminAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/admin/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store admin token
-        localStorage.setItem('adminToken', data.token);
-        localStorage.setItem('adminUser', JSON.stringify({
-          username: data.username,
-          role: data.role,
-        }));
-        
-        // Redirect to admin dashboard
-        router.push('/admin/dashboard');
-      } else {
-        setError(data.message || 'Invalid username or password');
-      }
-    } catch (error) {
-      setError('An error occurred. Please try again.');
+      await login(formData.username, formData.password);
+      // login method from context handles routing and state updates
+    } catch (err: any) {
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-yellow-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0a0520] flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Aurora Background */}
+      <div className="aurora-dashboard-bg opacity-60" />
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-sm border border-black/5 p-8">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 relative z-10">
           <div className="text-center mb-8">
-            <div className="mx-auto w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-4">
-              <Lock className="w-6 h-6 text-white" />
+            <div className="mx-auto w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4">
+              <Lock className="w-6 h-6 text-[#0a0520]" />
             </div>
-            <h1 className="text-2xl font-bold text-black mb-2">Admin Login</h1>
-            <p className="text-sm text-black/60">Sign in to access the admin dashboard</p>
+            <h1 className="text-3xl font-bold text-white tracking-tighter">Admin Access</h1>
+            <p className="text-sm text-white/80 mt-2">Sign in to manage the enterprise dashboard</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-[10px] font-black uppercase tracking-widest text-center"
+            >
+              {error}
+            </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-black/70 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-white/90 mb-2">
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-black/40" />
+                  <User className="h-5 w-5 text-white/70" />
                 </div>
                 <input
                   id="username"
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-10 pr-3 py-3 border border-black/20 rounded-lg bg-white text-black placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent transition-all"
                   placeholder="Enter your username"
                   required
                 />
@@ -95,19 +84,19 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-black/70 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white/90 mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-black/40" />
+                  <Lock className="h-5 w-5 text-white/70" />
                 </div>
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-10 py-3 border border-black/20 rounded-lg bg-white text-black placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-transparent"
+                  className="w-full pl-10 pr-10 py-3 border border-white/20 rounded-xl bg-white/5 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent transition-all"
                   placeholder="Enter your password"
                   required
                 />
@@ -117,9 +106,9 @@ export default function AdminLoginPage() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-black/40" />
+                    <EyeOff className="h-5 w-5 text-white/70" />
                   ) : (
-                    <Eye className="h-5 w-5 text-black/40" />
+                    <Eye className="h-5 w-5 text-white/70" />
                   )}
                 </button>
               </div>
@@ -128,14 +117,14 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-black text-white py-3 rounded-lg hover:bg-black/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full bg-white text-[#0a0520] py-4 rounded-xl hover:bg-white/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed font-bold tracking-tight"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <a href="/" className="text-sm text-black/60 hover:text-black transition-colors">
+            <a href="/" className="text-sm text-white/80 hover:text-white transition-colors">
               ← Back to Home
             </a>
           </div>

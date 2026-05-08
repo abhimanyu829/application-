@@ -86,15 +86,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-yellow-50/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0520]/80 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center bg-black font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center bg-white font-bold text-[#0a0520]">
                 <img src="/images/abhibhi-logo.png" alt="Abhibhi Developers" className="h-6 w-6 object-contain" />
               </div>
-              <span className="text-xl font-bold tracking-tighter text-black uppercase">Abhibhi</span>
+              <span className="text-xl font-bold tracking-tighter text-white uppercase">Abhibhi</span>
             </Link>
           </div>
 
@@ -105,7 +105,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="px-3 py-2 text-sm font-light text-black/60 transition-colors hover:text-black uppercase tracking-widest"
+                  className="px-3 py-2 text-sm font-light text-white/80 transition-colors hover:text-white uppercase tracking-widest"
                 >
                   {link.name}
                 </Link>
@@ -113,9 +113,9 @@ export default function Navbar() {
               
               <button
                 onClick={handleAdminPanel}
-                className="group flex items-center gap-2 px-3 py-2 text-sm font-light text-black/60 transition-colors hover:text-black uppercase tracking-widest"
+                className="group flex items-center gap-2 px-4 py-2 text-xs font-bold text-[#0a0520] bg-white rounded-lg transition-all hover:scale-105 active:scale-95 uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.1)]"
               >
-                <Lock className="h-3 w-3 transition-transform group-hover:scale-110" />
+                <Lock className="h-3 w-3" />
                 Admin Panel
               </button>
             </div>
@@ -126,18 +126,23 @@ export default function Navbar() {
               {user ? (
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-black/5 text-xs font-medium text-black">
+                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-black/5 text-xs font-medium text-white">
                       {photoUrl ? (
-                        <img src={photoUrl} alt={user.name} className="h-full w-full object-cover" />
+                        <img 
+                          src={photoUrl} 
+                          alt={user.name} 
+                          className="h-full w-full object-cover" 
+                          onError={() => setPhotoUrl(null)}
+                        />
                       ) : (
                         user.name?.charAt(0) || <User className="h-4 w-4" />
                       )}
                     </div>
-                    <span className="text-sm font-light text-black">{user.name}</span>
+                    <span className="text-sm font-light text-white">{user.name}</span>
                   </div>
                   <button
                     onClick={logout}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-light text-black/60 transition-colors hover:text-black uppercase tracking-widest"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-light text-white/80 transition-colors hover:text-white uppercase tracking-widest"
                   >
                     <LogOut className="h-4 w-4" />
                     Logout
@@ -146,7 +151,7 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={loginWithGoogle}
-                  className="bg-black px-6 py-2.5 text-xs font-medium text-white transition-colors hover:bg-black/80 uppercase tracking-widest"
+                  className="bg-white px-6 py-2.5 text-[10px] font-bold text-[#0a0520] transition-all hover:bg-white/90 hover:scale-105 active:scale-95 uppercase tracking-widest shadow-lg"
                 >
                   Login with Google
                 </button>
@@ -158,7 +163,7 @@ export default function Navbar() {
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 text-black/60 hover:text-black focus:outline-none"
+              className="inline-flex items-center justify-center p-2 text-white/80 hover:text-white focus:outline-none"
             >
               <span className="sr-only">Open main menu</span>
               {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
@@ -169,13 +174,13 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-yellow-50 border-b border-black/5">
+        <div className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10">
           <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="block px-3 py-4 text-base font-light text-black/60 hover:text-black uppercase tracking-widest"
+                className="block px-3 py-4 text-base font-light text-white/80 hover:text-white uppercase tracking-widest"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
@@ -187,7 +192,7 @@ export default function Navbar() {
                 setIsOpen(false);
                 handleAdminPanel();
               }}
-              className="flex w-full items-center gap-2 px-3 py-4 text-base font-light text-black/60 hover:text-black uppercase tracking-widest text-left"
+              className="flex w-full items-center gap-2 px-3 py-4 text-base font-light text-white/80 hover:text-white uppercase tracking-widest text-left"
             >
               <Lock className="h-4 w-4" />
               Admin Panel
@@ -197,18 +202,23 @@ export default function Navbar() {
             {user ? (
               <div className="px-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-black/5 text-sm font-medium text-black">
+                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-black/5 text-sm font-medium text-white">
                     {photoUrl ? (
-                      <img src={photoUrl} alt={user.name} className="h-full w-full object-cover" />
+                      <img 
+                        src={photoUrl} 
+                        alt={user.name} 
+                        className="h-full w-full object-cover" 
+                        onError={() => setPhotoUrl(null)}
+                      />
                     ) : (
                       user.name?.charAt(0) || <User className="h-5 w-5" />
                     )}
                   </div>
                   <div>
-                    <div className="text-base font-medium leading-none text-black">
+                    <div className="text-base font-medium leading-none text-white">
                       {user.name}
                     </div>
-                    <div className="text-sm font-light leading-none text-black/60 mt-2">
+                    <div className="text-sm font-light leading-none text-white/80 mt-2">
                       {user.email}
                     </div>
                   </div>
@@ -219,7 +229,7 @@ export default function Navbar() {
                       logout();
                       setIsOpen(false);
                     }}
-                    className="flex w-full items-center gap-3 px-3 py-3 text-base font-light text-black/60 hover:text-black uppercase tracking-widest"
+                    className="flex w-full items-center gap-3 px-3 py-3 text-base font-light text-white/80 hover:text-white uppercase tracking-widest"
                   >
                     <LogOut className="h-5 w-5" />
                     Logout
@@ -233,7 +243,7 @@ export default function Navbar() {
                     loginWithGoogle();
                     setIsOpen(false);
                   }}
-                  className="flex w-full items-center justify-center bg-black px-4 py-4 text-sm font-medium text-white hover:bg-black/80 uppercase tracking-widest"
+                  className="flex w-full items-center justify-center bg-white px-4 py-4 text-sm font-medium text-[#0a0520] hover:bg-white/80 uppercase tracking-widest"
                 >
                   Login with Google
                 </button>
