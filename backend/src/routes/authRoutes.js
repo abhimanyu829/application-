@@ -8,11 +8,15 @@ const {
   googleAuth,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+const { authLimiter, apiLimiter } = require('../middleware/rateLimits');
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/me', protect, getMe);
-router.patch('/me', protect, updateUser);
-router.post('/google', googleAuth);
+// Auth routes — strict rate limit on login/register/google
+router.post('/register', authLimiter, registerUser);
+router.post('/login', authLimiter, loginUser);
+router.post('/google', authLimiter, googleAuth);
+
+// Protected user routes — standard rate limit
+router.get('/me', apiLimiter, protect, getMe);
+router.patch('/me', apiLimiter, protect, updateUser);
 
 module.exports = router;

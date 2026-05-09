@@ -8,14 +8,34 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
-  // Allow access to remote image placeholder.
+  // Allow access to remote image placeholder and backend uploads.
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**',
+      },
+      // Production VPS — team member avatar uploads
+      {
+        protocol: 'https',
+        hostname: 'abhibhidevelopers.online',
+        port: '',
+        pathname: '/uploads/**',
+      },
+      // Development — local backend
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '5000',
+        pathname: '/uploads/**',
       },
     ],
   },

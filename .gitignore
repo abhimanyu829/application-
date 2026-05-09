@@ -5,3 +5,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Backend upload images — keep directory structure via .gitkeep files
+backend/uploads/**
+!backend/uploads/**/.gitkeep
+
+# Winston log files
+backend/logs/

@@ -7,6 +7,7 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a username'],
       unique: true,
+      index: true,
       trim: true,
       minlength: [3, 'Username must be at least 3 characters'],
     },

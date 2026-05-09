@@ -9,10 +9,11 @@ const teamMemberSchema = mongoose.Schema(
     department: {
       type: String,
       required: [true, 'Please add a department'],
+      index: true,
     },
     role: {
       type: String,
-      required: [true, 'Please add a role'],  
+      required: [true, 'Please add a role'],
     },
     email: {
       type: String,
@@ -22,6 +23,7 @@ const teamMemberSchema = mongoose.Schema(
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'approved',
+      index: true,
     },
     avatar: {
       type: String,

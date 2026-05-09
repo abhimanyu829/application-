@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Search, Linkedin, Github } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { apiFetch, buildImageUrl } from '@/lib/api';
 
 interface TeamMember {
   _id: string;
@@ -35,12 +36,8 @@ export default function TeamPage() {
 
   const fetchTeamMembers = async () => {
     try {
-      // Fetch only approved members
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/team/members?status=approved`);
-      if (response.ok) {
-        const data = await response.json();
-        setMembers(data);
-      }
+      const data = await apiFetch<TeamMember[]>('/team/members?status=approved');
+      setMembers(data);
     } catch (error) {
       console.error('Error fetching team members:', error);
     } finally {
@@ -159,7 +156,7 @@ export default function TeamPage() {
                       <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
                       {member.avatar ? (
                         <img
-                          src={member.avatar}
+                          src={buildImageUrl(member.avatar)}
                           alt={member.name}
                           className="w-24 h-24 rounded-full object-cover border-2 border-white/10 relative z-10"
                         />

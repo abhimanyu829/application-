@@ -64,11 +64,13 @@ const applicantSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
+      index: true,
     },
     user_id: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
     },
     photoId: {
       type: String,

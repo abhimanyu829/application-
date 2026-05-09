@@ -51,7 +51,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24">
             <h2 className="text-xs font-medium tracking-widest text-white/80 uppercase mb-4">Our Expertise</h2>
-            <p className="font-display text-4xl font-bold tracking-tighter text-white sm:text-6xl">
+            <p className="font-display text-4xl font-bold tracking-tighter text-white sm:text-6xl text-shadow">
               Everything you need to scale
             </p>
           </div>
