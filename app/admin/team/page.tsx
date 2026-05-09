@@ -57,10 +57,19 @@ export default function AdminTeamPanel() {
       const token = localStorage.getItem('adminToken');
       if (!token) { router.push('/admin/login'); return; }
 
-      const data = await apiFetch<TeamMember[]>('/team/members', { token });
-      setMembers(data);
+      const raw = await apiFetch<unknown>('/team/members', { token });
+      // Normalise: backend may return { members:[...] }, { data:[...] }, or a raw array
+      const arr: TeamMember[] = Array.isArray(raw)
+        ? (raw as TeamMember[])
+        : Array.isArray((raw as any)?.members)
+          ? (raw as any).members
+          : Array.isArray((raw as any)?.data)
+            ? (raw as any).data
+            : [];
+      setMembers(arr);
     } catch (err) {
       console.error('Error fetching team members:', err);
+      setMembers([]);
     } finally {
       if (!isBackground) setFetchLoading(false);
     }

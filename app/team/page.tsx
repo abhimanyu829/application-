@@ -36,10 +36,19 @@ export default function TeamPage() {
 
   const fetchTeamMembers = async () => {
     try {
-      const data = await apiFetch<TeamMember[]>('/team/members?status=approved');
-      setMembers(data);
+      const raw = await apiFetch<unknown>('/team/members?status=approved');
+      // Normalise: backend may return { members:[...] }, { data:[...] }, or a raw array
+      const arr: TeamMember[] = Array.isArray(raw)
+        ? (raw as TeamMember[])
+        : Array.isArray((raw as any)?.members)
+          ? (raw as any).members
+          : Array.isArray((raw as any)?.data)
+            ? (raw as any).data
+            : [];
+      setMembers(arr);
     } catch (error) {
       console.error('Error fetching team members:', error);
+      setMembers([]);
     } finally {
       setLoading(false);
     }
