@@ -85,8 +85,16 @@ export default function AdminDashboard() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setApplicants(data);
+        const raw = await response.json();
+        // Normalise: backend may return { applicants:[...] }, { data:[...] }, or a raw array
+        const arr: Applicant[] = Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw?.applicants)
+            ? raw.applicants
+            : Array.isArray(raw?.data)
+              ? raw.data
+              : [];
+        setApplicants(arr);
       }
     } catch (err: any) {
       console.error('Error fetching applicants:', err);
@@ -109,8 +117,16 @@ export default function AdminDashboard() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setTeamMembers(data);
+        const raw = await response.json();
+        // Normalise: backend may return { members:[...] }, { data:[...] }, or a raw array
+        const arr: TeamMember[] = Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw?.members)
+            ? raw.members
+            : Array.isArray(raw?.data)
+              ? raw.data
+              : [];
+        setTeamMembers(arr);
       }
     } catch (err) {
       console.error('Error fetching team members:', err);
