@@ -79,7 +79,9 @@ export default function Contact() {
                 </div>
 
                 <div className="group transition-all">
-                  <h2 className="text-[10px] font-black tracking-[0.2em] text-white/30 uppercase mb-3 group-hover:text-purple-400 transition-colors">Secure Uplink (Email):</h2>
+                  <h2 className="text-[10px] font-black tracking-[0.2em] text-white/30 uppercase mb-3 group-hover:text-purple-400 transition-colors">Business Intelligence (Email):</h2>
+                  <p className="text-xl font-light text-white/60 hover:text-white transition-colors break-all underline decoration-white/20 underline-offset-8 mb-4">abhibhidevelopers@abhibhidevelopers.online</p>
+                  <h2 className="text-[10px] font-black tracking-[0.2em] text-white/30 uppercase mb-3 group-hover:text-purple-400 transition-colors">Technical Uplink (Personal):</h2>
                   <p className="text-xl font-light text-white/60 hover:text-white transition-colors break-all underline decoration-white/20 underline-offset-8">abhimanyuk50281@gmail.com</p>
                 </div>
 

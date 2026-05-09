@@ -16,6 +16,11 @@ export default function Footer() {
             <p className="mt-8 text-sm font-light leading-relaxed text-white/60">
               Building scalable SaaS & AI solutions for modern businesses. We transform ideas into enterprise-grade software.
             </p>
+            <p className="mt-4 text-sm font-medium text-white/80">
+              <a href="mailto:abhibhidevelopers@abhibhidevelopers.online" className="hover:text-emerald-400 transition-colors">
+                abhibhidevelopers@abhibhidevelopers.online
+              </a>
+            </p>
           </div>
           <div>
             <h3 className="text-xs font-medium text-white tracking-widest uppercase mb-8">Solutions</h3>
